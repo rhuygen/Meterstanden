@@ -8,6 +8,7 @@ from datetime import datetime
 output_notebook()
 
 datadir = os.path.expanduser('~/Git/Pythonista/Meterstanden')
+outputdir = os.path.expanduser('~/Private/Dropbox/Documents/Meterstanden')
 filename = os.path.join(datadir, 'Meterstanden.csv')
 
 # The values below match the iPhone 7 or iPad Pro display
@@ -48,7 +49,7 @@ p = figure(x_axis_label='Datum', x_axis_type='datetime', y_axis_label='Volume (m
 
 p.circle(dt, data['water'])
 
-output_file(os.path.join(datadir, "Verbruik_Water.html"))
+output_file(os.path.join(outputdir, "Verbruik_Water.html"))
 save(p)
 show(p, browser=show_browser)
 
@@ -63,7 +64,7 @@ p = figure(x_axis_label='Datum', x_axis_type='datetime', y_axis_label='Volume (m
 
 p.circle(dt, data['gas'])
 
-output_file(os.path.join(datadir, "Verbruik_Gas.html"))
+output_file(os.path.join(outputdir, "Verbruik_Gas.html"))
 save(p)
 show(p, browser=show_browser)
 
@@ -112,7 +113,7 @@ p.add_layout(LinearAxis(y_range_name="temp"), 'right')
 p.line(dt, data['temperatuur'], color='green', y_range_name='temp')
 p.circle(dt, data['temperatuur'], color='green', fill_color='white', size=4, y_range_name='temp')
 
-output_file(os.path.join(datadir, "Verbruik_Gas_per_dag.html"))
+output_file(os.path.join(outputdir, "Verbruik_Gas_per_dag.html"))
 save(p)
 show(p, browser=show_browser)
 
@@ -129,7 +130,7 @@ p = figure(x_axis_label='Datum', x_axis_type='datetime', y_axis_label='Verbruik 
 p.line(dt, e_total)
 p.circle(dt, e_total, size=3)
 
-output_file(os.path.join(datadir, "Verbruik_Elektriciteit.html"))
+output_file(os.path.join(outputdir, "Verbruik_Elektriciteit.html"))
 save(p)
 show(p, browser=show_browser)
 
@@ -165,7 +166,7 @@ p = figure(x_axis_label='Datum', x_axis_type='datetime', y_axis_label='Verbruik 
 p.line(dt[1:], epd, line_width=1)
 p.circle(dt[1:], epd, fill_color='white', size=4)
 
-output_file(os.path.join(datadir, "Verbruik_Elektriciteit_per_dag.html"))
+output_file(os.path.join(outputdir, "Verbruik_Elektriciteit_per_dag.html"))
 save(p)
 show(p, browser=show_browser)
 
@@ -187,7 +188,7 @@ p = figure(x_axis_label='Datum', x_axis_type='datetime', y_axis_label='Calculate
 p.line(dt, sma_diff, line_width=1)
 p.circle(dt, sma_diff, fill_color='white', size=4)
 
-output_file(os.path.join(datadir, "Controle_SMA_berekening.html"))
+output_file(os.path.join(outputdir, "Controle_SMA_berekening.html"))
 save(p)
 show(p, browser=show_browser)
 
@@ -204,7 +205,7 @@ p = figure(x_axis_label='Datum', x_axis_type='datetime', y_axis_label='SMA 7000 
 
 p.circle(dt, sma_ratio)
 
-output_file(os.path.join(datadir, "Ratio_Zonnepanelen.html"))
+output_file(os.path.join(outputdir, "Ratio_Zonnepanelen.html"))
 save(p)
 show(p, browser=show_browser)
 
