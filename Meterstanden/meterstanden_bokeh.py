@@ -1,8 +1,9 @@
 import numpy as np
 import os
 
-from bokeh.plotting import figure, show
+from bokeh.plotting import figure, show, ColumnDataSource
 from bokeh.io import output_notebook, output_file, save
+from bokeh.models import HoverTool
 from datetime import datetime
 
 output_notebook()
@@ -182,11 +183,16 @@ sma_diff = z_total - data_sma
 small_values = sma_diff < 0.0001
 sma_diff[small_values] = 0.0
 
+source = ColumnDataSource(data=dict(x=dt, y=sma_diff))
+
+hover = HoverTool(tooltips=[("Total", "@y")])
+
 p = figure(x_axis_label='Datum', x_axis_type='datetime', y_axis_label='Calculated - Tabulated SMA', \
            plot_height=plot_height, plot_width=plot_width, title='Controle op berekening totale SMA')
 
-p.line(dt, sma_diff, line_width=1)
-p.circle(dt, sma_diff, fill_color='white', size=4)
+p.add_tools(hover)
+p.line('x', 'y', line_width=1, source=source)
+p.circle('x', 'y', fill_color='white', size=4, source=source)
 
 output_file(os.path.join(outputdir, "Controle_SMA_berekening.html"))
 save(p)
