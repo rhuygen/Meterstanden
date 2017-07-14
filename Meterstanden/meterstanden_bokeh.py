@@ -1,9 +1,10 @@
 import numpy as np
+import pandas as pd
 import os
 
-from bokeh.plotting import figure, show, ColumnDataSource
+from bokeh.plotting import figure, show
 from bokeh.io import output_notebook, output_file, save
-from bokeh.models import HoverTool
+from bokeh.models import HoverTool, ColumnDataSource, LabelSet
 from datetime import datetime
 
 output_notebook()
@@ -183,16 +184,29 @@ sma_diff = z_total - data_sma
 small_values = sma_diff < 0.0001
 sma_diff[small_values] = 0.0
 
-source = ColumnDataSource(data=dict(x=dt, y=sma_diff))
+df_data = {'DateTime': dt, 'sma': sma_diff}
 
-hover = HoverTool(tooltips=[("Total", "@y")])
+df = pd.DataFrame(df_data)
+df['tooltip'] = [x.strftime("%Y-%m-%d") for x in df['DateTime']]
+
+source = ColumnDataSource(df.tail(10))
 
 p = figure(x_axis_label='Datum', x_axis_type='datetime', y_axis_label='Calculated - Tabulated SMA', \
-           plot_height=plot_height, plot_width=plot_width, title='Controle op berekening totale SMA')
+           plot_height=plot_height, plot_width=plot_width, title='Controle op berekening totale SMA', \
+           tools='resize,pan,wheel_zoom,box_zoom,reset,previewsave,hover',logo=None)
 
-p.add_tools(hover)
-p.line('x', 'y', line_width=1, source=source)
-p.circle('x', 'y', fill_color='white', size=4, source=source)
+hover = p.select(dict(type=HoverTool))
+hover.tooltips = [('date','@tooltip'), ('value','@sma')]
+hover.mode = 'mouse'
+
+labels = LabelSet(x='DateTime', y='sma', text='sma', y_offset=8,
+                  text_font_size="8pt", text_color="#555555",
+                  source=source, text_align='center')
+p.add_layout(labels)
+
+
+p.line('DateTime', 'sma', line_width=1, source=source)
+p.circle('DateTime', 'sma', fill_color='white', size=4, source=source)
 
 output_file(os.path.join(outputdir, "Controle_SMA_berekening.html"))
 save(p)
