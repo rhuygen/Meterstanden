@@ -5,12 +5,19 @@ import urllib.request, urllib.parse, urllib.error
 import os
 from datetime import datetime
 
+print (os.path.expanduser('~'))
+
+if os.path.expanduser('~') == '/Users/rik':
+    on_laptop = True
 
 # This is the location of the file in dropbox. 
 dropbox_location = "Documents/Meterstanden/Meterstanden.csv"
 
 # This is where the file should be copied to on my local iPad/Laptop.
-input_filename = 'from Working Copy/Pythonista/Meterstanden/Meterstanden.csv'
+if on_laptop:
+    input_filename = 'Git/Pythonista/Meterstanden/Meterstanden.csv'
+else:
+    input_filename = 'Documents/from Working Copy/Pythonista/Meterstanden/Meterstanden.csv'
 
 def copy_file_from_dropbox(source, destination):
     TOKEN='TDmFIIPHxcwAAAAAAAAJsP2t869VCS1HFZMuqoeE3Mh2J3MM2KvBQydibirg6RxZ'
@@ -32,7 +39,7 @@ def copy_file_from_dropbox(source, destination):
 #print("{} copied from dropbox, {} bytes copied, destination is {}"\
 #    .format(dropbox_location, n, input_filename))
 
-data = np.recfromcsv(os.path.join(os.path.expanduser('~/Documents/'), input_filename))
+data = np.recfromcsv(os.path.join(os.path.expanduser('~/'), input_filename))
 
 #print (data)
 #print (data[0])
