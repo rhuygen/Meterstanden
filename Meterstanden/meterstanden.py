@@ -7,6 +7,7 @@ from datetime import datetime
 
 print (os.path.expanduser('~'))
 
+on_laptop = False
 if os.path.expanduser('~') == '/Users/rik':
     on_laptop = True
 
