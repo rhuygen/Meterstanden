@@ -1,5 +1,11 @@
+try:
+    import bokeh as bk
+    import pandas as pd
+except ImportError:
+    print("This script requires Bokeh and Pandas.")
+    raise
+
 import numpy as np
-import pandas as pd
 import os
 
 from bokeh.plotting import figure, show
