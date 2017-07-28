@@ -2,23 +2,21 @@ import numpy as np
 import matplotlib.pyplot as plt
 import requests
 import urllib.request, urllib.parse, urllib.error
-import os
+import os, logging
+
 from datetime import datetime
 
-print (os.path.expanduser('~'))
+logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(message)s")
 
-on_laptop = False
-if os.path.expanduser('~') == '/Users/rik':
-    on_laptop = True
+HOME_DIR = os.path.expanduser('~')
 
-# This is the location of the file in dropbox. 
-dropbox_location = "Documents/Meterstanden/Meterstanden.csv"
+ON_LAPTOP = False
+ON_IPAD   = False
 
-# This is where the file should be copied to on my local iPad/Laptop.
-if on_laptop:
-    input_filename = 'Git/Pythonista/Meterstanden/Meterstanden.csv'
-else:
-    input_filename = 'Documents/from Working Copy/Pythonista/Meterstanden/Meterstanden.csv'
+if HOME_DIR.startswith('/Users/'):
+    ON_LAPTOP = True
+if 'Pythonista' in HOME_DIR:
+    ON_IPAD = True
 
 def copy_file_from_dropbox(source, destination):
     TOKEN='TDmFIIPHxcwAAAAAAAAJsP2t869VCS1HFZMuqoeE3Mh2J3MM2KvBQydibirg6RxZ'
@@ -35,29 +33,48 @@ def copy_file_from_dropbox(source, destination):
             bytes_written += len(chunk)
     return bytes_written
 
-#n = copy_file_from_dropbox(dropbox_location, input_filename)
 
-#print("{} copied from dropbox, {} bytes copied, destination is {}"\
-#    .format(dropbox_location, n, input_filename))
+# This is the location of the file in dropbox. 
 
-data = np.recfromcsv(os.path.join(os.path.expanduser('~/'), input_filename))
+dropbox_location = "Documents/Meterstanden/Meterstanden.csv"
+
+# This is where the file should be copied to, or where it is located, on my iPad or Laptop.
+
+if ON_LAPTOP:
+    input_filename = 'Git/Pythonista/Meterstanden/Meterstanden.csv'
+if ON_IPAD:
+    input_filename = 'Documents/from Working Copy/Pythonista/Meterstanden/Meterstanden.csv'
+
+# Example obsolete code that copies the input file from the dropbox location into the destination
+
+# n = copy_file_from_dropbox(dropbox_location, input_filename)
+# print("{} copied from dropbox, {} bytes copied, destination is {}".format(dropbox_location, n, input_filename))
+
+# Read the input csv file
+
+data = np.recfromcsv(os.path.join(HOME_DIR, input_filename))
+
+logging.info("Reading input csv file from {}.".format(input_filename))
 
 #print (data)
 #print (data[0])
 #print (data['date_time'])
 
 
-### Convert the byte string b'' into a 'normal' string
+# Convert the byte string b'' into a 'normal' string
 
 dt = [datetime.strptime(x.decode('UTF-8'), '%Y-%m-%d %H:%M') for x in data['date_time']]
 
-# Maak een plot voor het gasverbruik
+# ------ gasverbruik -----------------------------------------------------------
+
 fig, ax = plt.subplots()
 
 # Make space for and rotate the x-axis tick labels
+
 fig.autofmt_xdate()
 
 # Tell matplotlib to interpret the x-axis values as dates
+
 ax.xaxis_date()
 
 ax.plot(dt, data['gas'], 'k-')
@@ -73,7 +90,7 @@ plt.margins(0.05, 0.1)
 plt.show()
 plt.close()
 
-# Maak een plot voor het gasverbruik per dag
+# ------ gasverbruik per dag ---------------------------------------------------
 
 # Bereken het verbruik in gas tussen twee opeenvolgende metingen
 
@@ -116,7 +133,7 @@ plt.close()
 #p.circle(dt, data['temperatuur'], color='green', fill_color='white', size=4, y_range_name='temp')
 
 
-# Verbruik elektriciteit
+# ------ elektriciteit ---------------------------------------------------------
 
 e_total = data['edag'] + data['enacht']
 
@@ -133,7 +150,7 @@ plt.show()
 plt.close()
 
 
-# Verbruik elektriciteit per dag
+# ------ elektriciteit per dag -------------------------------------------------
 
 # Bereken het verbruik in elektriciteit tussen twee opeenvolgende metingen
 # Elektriciteit voor de dag en nacht teller eerst bijeen tellen
@@ -161,7 +178,9 @@ plt.show()
 plt.close()
 
 
-# Verschil tussen het berekende z_totaal en data['sma']
+# ------ controle SMA berekening -----------------------------------------------
+
+# Bereken het verschil tussen het berekende z_totaal en data['sma']
 
 data_sma = data['sma']
 where_isnan = np.isnan(data_sma)
@@ -186,7 +205,7 @@ plt.show()
 plt.close()
 
 
-# Verhouding opbrengst zonnepanelen
+# ------ verhouding opbrengst zonnepanelen -------------------------------------
 
 sma_ratio = data['sma_7000'] / data['sma_3000']
 
