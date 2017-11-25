@@ -206,7 +206,7 @@ plt.close()
 
 # FIXME: Dit klopt nog niet helemaal, z_total is blijkbaar niet volledig ingevuld...
 print ("Totale opbrengst zonnepanelen [kWh]")
-print (z_total.tail(10))
+print (z_total[-10:])
 
 # ------ verhouding opbrengst zonnepanelen -------------------------------------
 
