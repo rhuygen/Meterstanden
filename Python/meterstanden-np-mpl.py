@@ -204,6 +204,8 @@ plt.margins(0.05, 0.1)
 plt.show()
 plt.close()
 
+print ("Totale opbrengst zonnepanelen [kWh]")
+print (z_total.tail(10))
 
 # ------ verhouding opbrengst zonnepanelen -------------------------------------
 
