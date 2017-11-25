@@ -204,6 +204,7 @@ plt.margins(0.05, 0.1)
 plt.show()
 plt.close()
 
+# FIXME: Dit klopt nog niet helemaal, z_total is blijkbaar niet volledig ingevuld...
 print ("Totale opbrengst zonnepanelen [kWh]")
 print (z_total.tail(10))
 
