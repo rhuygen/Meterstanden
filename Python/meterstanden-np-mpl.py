@@ -43,7 +43,7 @@ dropbox_location = "Documents/Meterstanden/Meterstanden.csv"
 if ON_LAPTOP:
     input_filename = 'Git/Pythonista/Meterstanden/Meterstanden.csv'
 if ON_IPAD:
-    input_filename = 'Documents/from Working Copy/Pythonista/Meterstanden/Meterstanden.csv'
+    input_filename = 'Documents/from Working Copy/Meterstanden/Data/Meterstanden.csv'
 
 # Example obsolete code that copies the input file from the dropbox location into the destination
 
