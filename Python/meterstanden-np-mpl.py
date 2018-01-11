@@ -18,8 +18,12 @@ if HOME_DIR.startswith('/Users/'):
 if 'Pythonista' in HOME_DIR:
     ON_IPAD = True
 
+DPI = 96
+FIGSIZE_X = 1280
+FIGSIZE_Y = 960
+
 def copy_file_from_dropbox(source, destination):
-    TOKEN='TDmFIIPHxcwAAAAAAAAJsP2t869VCS1HFZMuqoeE3Mh2J3MM2KvBQydibirg6RxZ'
+    TOKEN = 'TDmFIIPHxcwAAAAAAAAJsP2t869VCS1HFZMuqoeE3Mh2J3MM2KvBQydibirg6RxZ'
     headers = {'Authorization': 'Bearer %s' % (TOKEN,)}
     url_path = urllib.parse.quote(source.encode('utf-8'))
     url = 'https://api-content.dropbox.com/1/files/dropbox/%s' % (url_path,)
@@ -34,7 +38,7 @@ def copy_file_from_dropbox(source, destination):
     return bytes_written
 
 
-# This is the location of the file in dropbox. 
+# This is the location of the file in dropbox.
 
 dropbox_location = "Documents/Meterstanden/Meterstanden.csv"
 
@@ -64,6 +68,36 @@ logging.info("Reading input csv file from {}.".format(input_filename))
 # Convert the byte string b'' into a 'normal' string
 
 dt = [datetime.strptime(x.decode('UTF-8'), '%Y-%m-%d %H:%M') for x in data['date_time']]
+
+
+# ------ waterverbruik ---------------------------------------------------------
+
+title = "Verbruik Water"
+fig = plt.figure(figsize=(FIGSIZE_X/DPI, FIGSIZE_Y/DPI), dpi=DPI)
+fig.suptitle(title)
+ax = fig.add_subplot(111)
+
+# Make space for and rotate the x-axis tick labels
+
+fig.autofmt_xdate()
+
+# Tell matplotlib to interpret the x-axis values as dates
+
+ax.xaxis_date()
+
+ax.plot(dt, data['water'], 'k-')
+ax.plot(dt, data['water'], 'bo')
+
+ax.set_xlabel("Datum")
+ax.set_ylabel("Verbruik Water [m$^3$]")
+
+
+# Create a 5% (0.05) and 10% (0.1) padding in the
+# x and y directions respectively.
+plt.margins(0.05, 0.1)
+
+plt.show()
+plt.close()
 
 # ------ gasverbruik -----------------------------------------------------------
 
