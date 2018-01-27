@@ -1,10 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 import requests
 import urllib.request, urllib.parse, urllib.error
-import os, logging
+import sys, os, logging
 
-from datetime import datetime
+import datetime
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(message)s")
 
@@ -45,7 +46,7 @@ dropbox_location = "Documents/Meterstanden/Meterstanden.csv"
 # This is where the file should be copied to, or where it is located, on my iPad or Laptop.
 
 if ON_LAPTOP:
-    input_filename = 'Git/Pythonista/Meterstanden/Meterstanden.csv'
+    input_filename = 'Private/Git/Meterstanden/Data/Meterstanden.csv'
 if ON_IPAD:
     input_filename = 'Documents/from Working Copy/Meterstanden/Data/Meterstanden.csv'
 
@@ -60,66 +61,84 @@ data = np.recfromcsv(os.path.join(HOME_DIR, input_filename))
 
 logging.info("Reading input csv file from {}.".format(input_filename))
 
-#print (data)
-#print (data[0])
-#print (data['date_time'])
-
-
 # Convert the byte string b'' into a 'normal' string
 
-dt = [datetime.strptime(x.decode('UTF-8'), '%Y-%m-%d %H:%M') for x in data['date_time']]
+dt = np.array([datetime.datetime.strptime(x.decode('UTF-8'), '%Y-%m-%d %H:%M') for x in data['date_time']])
 
+years = mdates.YearLocator()   # every year
+months = mdates.MonthLocator()  # every month
+yearsFmt = mdates.DateFormatter('%Y')
 
 # ------ waterverbruik ---------------------------------------------------------
 
-title = "Verbruik Water"
 fig = plt.figure(figsize=(FIGSIZE_X/DPI, FIGSIZE_Y/DPI), dpi=DPI)
-fig.suptitle(title)
-ax = fig.add_subplot(111)
+fig.suptitle("Meterstanden")
 
-# Make space for and rotate the x-axis tick labels
+title = "Verbruik Water"
 
-fig.autofmt_xdate()
+ax_water = fig.add_subplot(321)
+ax_water.set_title(title)
+
+ax_water.plot(dt, data['water'], 'k-')
+ax_water.plot(dt, data['water'], 'b.')
+
+ax_water.set_xlabel("Datum")
+ax_water.set_ylabel("Verbruik Water [m$^3$]")
+
+# format the ticks
+ax_water.xaxis.set_major_locator(years)
+ax_water.xaxis.set_major_formatter(yearsFmt)
+ax_water.xaxis.set_minor_locator(months)
+
+#datemin = datetime.date(dt.min().year, 1, 1)
+#datemax = datetime.date(dt.max().year + 1, 1, 1)
+#ax_water.set_xlim(datemin, datemax)
+
+ax_water.format_xdata = mdates.DateFormatter('%Y-%m-%d')
+ax_water.grid(True)
 
 # Tell matplotlib to interpret the x-axis values as dates
 
-ax.xaxis_date()
-
-ax.plot(dt, data['water'], 'k-')
-ax.plot(dt, data['water'], 'bo')
-
-ax.set_xlabel("Datum")
-ax.set_ylabel("Verbruik Water [m$^3$]")
-
+#ax_water.xaxis_date()
 
 # Create a 5% (0.05) and 10% (0.1) padding in the
 # x and y directions respectively.
-plt.margins(0.05, 0.1)
+#plt.margins(0.05, 0.1)
 
-plt.show()
-plt.close()
+# Make space for and rotate the x-axis tick labels
+
+#fig.autofmt_xdate()
+
+#plt.show()
+#plt.close()
+
 
 # ------ gasverbruik -----------------------------------------------------------
 
-fig, ax = plt.subplots()
-
-# Make space for and rotate the x-axis tick labels
-
-fig.autofmt_xdate()
+ax_gas = fig.add_subplot(322)
 
 # Tell matplotlib to interpret the x-axis values as dates
 
-ax.xaxis_date()
+#ax_gas.xaxis_date()
 
-ax.plot(dt, data['gas'], 'k-')
-ax.plot(dt, data['gas'], 'bo')
+ax_gas.plot(dt, data['gas'], 'k-')
+ax_gas.plot(dt, data['gas'], 'b.')
 
-ax.set_xlabel("Datum")
-ax.set_ylabel("Verbruik Gas [m$^3$]")
+ax_gas.set_xlabel("Datum")
+ax_gas.set_ylabel("Verbruik Gas [m$^3$]")
 
+ax_gas.format_xdata = mdates.DateFormatter('%Y-%m-%d')
+ax_gas.grid(True)
+
+plt.setp(ax_gas.xaxis.get_majorticklabels(), rotation=30)
+#ax_gas.get_xmajorticklabels().set_rotation(30)
 # Create a 5% (0.05) and 10% (0.1) padding in the
 # x and y directions respectively.
-plt.margins(0.05, 0.1)
+#plt.margins(0.05, 0.1)
+
+# Make space for and rotate the x-axis tick labels
+
+#fig.autofmt_xdate()
 
 plt.show()
 plt.close()
