@@ -2,6 +2,8 @@
 
 import sys, os, logging
 import numpy as np
+import pandas as pd
+
 import qdarkstyle
 
 from PyQt5 import QtCore, QtWidgets
@@ -42,7 +44,7 @@ class MainWindow_EXEC():
     #---------------------------------------------------------------------------
     def init_tabs(self):
         import data
-        self.data, self.dt = data.load_data()
+        self.data, self.df, self.dt = data.load_data()
 
         self.ui.tabWidget.currentChanged['int'].connect(self.tabSelected)
 
@@ -50,20 +52,22 @@ class MainWindow_EXEC():
 
     def tabSelected(self, arg=None):
 
-        print ("tabSelected: {}". format(arg))
-
         drawMethod = {
             0 : self.drawWaterVerbruik,
             1 : self.drawGasVerbruik,
-            2 : self.drawElektriciteitsVerbruik,
-            3 : self.drawZonnepanelen
+            2 : self.drawGasVerbruikPerDag,
+            3 : self.drawElektriciteitsVerbruik,
+            4 : self.drawElektriciteitsVerbruikPerDag,
+            5 : self.drawZonnepanelen
         }
 
         drawCanvas = {
             0 : self.ui.water,
             1 : self.ui.gas,
-            2 : self.ui.elektriciteit,
-            3 : self.ui.zonnepanelen
+            2 : self.ui.gas_per_dag,
+            3 : self.ui.elektriciteit,
+            4 : self.ui.elektriciteit_per_dag,
+            5 : self.ui.zonnepanelen
         }
 
         drawMethod[arg](drawCanvas[arg])
@@ -77,7 +81,7 @@ class MainWindow_EXEC():
         title = "Verbruik Water"
         
         canvas.axes.cla()
-        canvas.setColorScheme("dark")
+        canvas.setColorScheme("default")
 
         canvas.axes.set_title(title)
         
@@ -140,8 +144,10 @@ class MainWindow_EXEC():
         canvas.axes.format_xdata = mdates.DateFormatter('%Y-%m-%d')
         canvas.axes.grid(True)
         
-        plt.setp(canvas.axes.xaxis.get_majorticklabels(), rotation=30)
+        #plt.setp(canvas.axes.xaxis.get_majorticklabels(), rotation=30)
+
         #canvas.axes.get_xmajorticklabels().set_rotation(30)
+        
         # Create a 5% (0.05) and 10% (0.1) padding in the
         # x and y directions respectively.
         #plt.margins(0.05, 0.1)
@@ -149,6 +155,39 @@ class MainWindow_EXEC():
         # Make space for and rotate the x-axis tick labels
         
         #fig.autofmt_xdate()
+
+        canvas.draw()
+
+
+    def drawGasVerbruikPerDag(self, canvas):
+
+        title = "Gas verbruik per dag"
+
+        # Bereken het verbruik in gas tussen twee opeenvolgende metingen
+        
+        g_diff = self.df['Gas'].diff().dropna()
+        
+        # Bereken de tijd tussen twee opeenvolgende metingen in dagen (both options are the same)
+        
+        time_diff_days = g_diff.index.to_series().diff().astype('timedelta64[s]') / 60. / 60. / 24.
+        time_diff_days = g_diff.index.to_series().diff().dt.total_seconds().fillna(0) / 60. / 60. / 24.
+        
+        # Bereken het verbruik van gas per dag
+        
+        g_per_dag = g_diff / time_diff_days
+
+        canvas.axes.cla()
+        canvas.setColorScheme("default")
+
+        canvas.axes.set_title(title)
+
+        canvas.axes.plot(g_per_dag, '-')
+        canvas.axes.plot(g_per_dag, '.')
+
+        canvas.axes.set_xlabel("Datum")
+        canvas.axes.set_ylabel("Verbruik Gas per Dag [m$^3$/dag]")
+
+        canvas.axes.grid(True)
 
         canvas.draw()
 
@@ -177,9 +216,58 @@ class MainWindow_EXEC():
         canvas.draw()
 
 
+    def drawElektriciteitsVerbruikPerDag(self, canvas):
+
+        title = "Elektriciteitsverbruik per dag"
+
+        # Bereken het verbruik in elektriciteit tussen twee opeenvolgende metingen
+        # Elektriciteit voor de dag en nacht teller eerst bijeen tellen
+        
+        e_total = self.df.eDag + self.df.eNacht
+        e_diff = e_total.diff().dropna()
+        
+        # Bereken de tijd tussen twee opeenvolgende metingen in dagen
+        
+        time_diff_days = e_diff.index.to_series().diff().dt.total_seconds().fillna(0) / 60. / 60. / 24.
+        
+        # Bereken het elektriciteitsverbruik per dag
+        
+        e_per_dag = e_diff / time_diff_days
+        
+        # Bereken de totale opbrengst per dag van de zonnepanelen
+        
+        z_total = self.df.SMA_3000.shift(1) + self.df.SMA_7000.shift(1)
+        z_total = z_total.dropna()
+        
+        print ("Totale opbrengst zonnepanelen op {}: {} [kWh]".format(z_total.index[-1], z_total[-1]))
+        
+        # Het totaal verbruik per dag is de sum van het elektriciteitsverbruik en de opbrengst van de zonnepanelen
+        
+        ez_per_dag = e_per_dag + z_total
+
+
+        canvas.axes.cla()
+        canvas.setColorScheme("default")
+
+        canvas.axes.set_title(title)
+
+        canvas.axes.plot(ez_per_dag, '-')
+        canvas.axes.plot(ez_per_dag, '.')
+
+        canvas.axes.set_xlabel("Datum")
+        canvas.axes.set_ylabel("Verbruik Elektriciteit per Dag [kWh/dag]")
+
+        canvas.axes.grid(True)
+
+        canvas.draw()
+
+
     def drawZonnepanelen(self, canvas):
 
-        sma_ratio = self.data['sma_7000'] / self.data['sma_3000']
+        # De SMA 7000 bevat 32 zonnepanelen, de SMA 3000 bevat er 14. 
+        # De verhouding zou dus ± 2.28 moeten zijn
+        
+        sma_ratio = self.df.SMA_7000 / self.df.SMA_3000
 
         title = "Zonnepanelen"
 
@@ -192,7 +280,7 @@ class MainWindow_EXEC():
         canvas.axes.xaxis_date()        
         canvas.axes.set_xlabel("Datum")
         canvas.axes.set_ylabel("SMA 7000 / SMA 3000")
-        canvas.axes.plot(self.dt, sma_ratio, ".")
+        canvas.axes.plot(sma_ratio, ".")
         canvas.axes.grid(True)
         
         plt.margins(0.05, 0.1)

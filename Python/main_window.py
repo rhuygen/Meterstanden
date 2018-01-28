@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(974, 604)
+        MainWindow.resize(1013, 628)
         MainWindow.setMinimumSize(QtCore.QSize(637, 400))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -37,6 +37,15 @@ class Ui_MainWindow(object):
         self.gas.setObjectName("gas")
         self.horizontalLayout_2.addWidget(self.gas)
         self.tabWidget.addTab(self.Gas, "")
+        self.Gas_per_Dag = QtWidgets.QWidget()
+        self.Gas_per_Dag.setObjectName("Gas_per_Dag")
+        self.horizontalLayout_5 = QtWidgets.QHBoxLayout(self.Gas_per_Dag)
+        self.horizontalLayout_5.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_5.setObjectName("horizontalLayout_5")
+        self.gas_per_dag = DrawingCanvas(self.Gas_per_Dag)
+        self.gas_per_dag.setObjectName("gas_per_dag")
+        self.horizontalLayout_5.addWidget(self.gas_per_dag)
+        self.tabWidget.addTab(self.Gas_per_Dag, "")
         self.Elektriciteit = QtWidgets.QWidget()
         self.Elektriciteit.setObjectName("Elektriciteit")
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout(self.Elektriciteit)
@@ -46,6 +55,15 @@ class Ui_MainWindow(object):
         self.elektriciteit.setObjectName("elektriciteit")
         self.horizontalLayout_3.addWidget(self.elektriciteit)
         self.tabWidget.addTab(self.Elektriciteit, "")
+        self.Elektriciteit_per_Dag = QtWidgets.QWidget()
+        self.Elektriciteit_per_Dag.setObjectName("Elektriciteit_per_Dag")
+        self.horizontalLayout_6 = QtWidgets.QHBoxLayout(self.Elektriciteit_per_Dag)
+        self.horizontalLayout_6.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_6.setObjectName("horizontalLayout_6")
+        self.elektriciteit_per_dag = DrawingCanvas(self.Elektriciteit_per_Dag)
+        self.elektriciteit_per_dag.setObjectName("elektriciteit_per_dag")
+        self.horizontalLayout_6.addWidget(self.elektriciteit_per_dag)
+        self.tabWidget.addTab(self.Elektriciteit_per_Dag, "")
         self.Zonnepanelen = QtWidgets.QWidget()
         self.Zonnepanelen.setObjectName("Zonnepanelen")
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout(self.Zonnepanelen)
@@ -58,7 +76,7 @@ class Ui_MainWindow(object):
         self.gridLayout.addWidget(self.tabWidget, 0, 1, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 974, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1013, 22))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -66,7 +84,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(4)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -74,7 +92,9 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Water), _translate("MainWindow", "Water"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Gas), _translate("MainWindow", "Gas"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Gas_per_Dag), _translate("MainWindow", "Gas per Dag"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Elektriciteit), _translate("MainWindow", "Elektriciteit"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.Elektriciteit_per_Dag), _translate("MainWindow", "Elektriciteit per Dag"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.Zonnepanelen), _translate("MainWindow", "Zonnepanelen"))
 
 from drawing_canvas import DrawingCanvas
