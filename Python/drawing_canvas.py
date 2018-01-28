@@ -1,7 +1,9 @@
+import os
+
+from cycler import cycler
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
 
 from PyQt5 import QtWidgets
 
@@ -9,9 +11,24 @@ DPI = 96
 FIGSIZE_X = 1280
 FIGSIZE_Y = 960
 
-years = mdates.YearLocator()   # every year
-months = mdates.MonthLocator()  # every month
-yearsFmt = mdates.DateFormatter('%Y')
+kaleidoscope_colors = {
+    'blue'         : "#0000FF",
+    'green'        : "#00FF00",
+    'red'          : "#FF0000",
+    'yellow'       : "#FFFF00",
+    'orange'       : "#FF6600",
+    'purple'       : "#660066",
+
+    'light-blue'   : "#9999FF",
+    'light-green'  : "#99FF99",
+    'light-red'    : "#FF9999",
+    'light-yellow' : "#FFFF99",
+    'light-orange' : "#FF9900",
+    'light-purple' : "#9966FF"
+}
+
+# Define our own dark style and use it as default
+plt.style.use(os.path.join('.', 'dark.mplstyle'))
 
 
 class GraphicsView(QtWidgets.QGraphicsView):   
@@ -34,143 +51,83 @@ class DrawingCanvas(FigureCanvas):
     """Ultimately, this is a QWidget (as well as a FigureCanvasAgg, etc.)."""
 
     def __init__(self, parent=None, width=5, height=4, dpi=100):
-        self.fig = Figure(figsize=(width, height), dpi=dpi)
-        self.axes = self.fig.add_subplot(111)
 
-        import data
-        self.data, self.dt = data.load_data()
+        self.fig = Figure(figsize=(width, height), dpi=dpi)
 
         FigureCanvas.__init__(self, self.fig)
-        self.setParent(parent)
 
-        self.draw_initial_figure()
+        self.axes = self.fig.add_subplot(111)
 
+        self.setParent(parent)        
 
         FigureCanvas.setSizePolicy(self,
-                                   QtWidgets.QSizePolicy.Expanding,
-                                   QtWidgets.QSizePolicy.Expanding)
+            QtWidgets.QSizePolicy.Expanding,
+            QtWidgets.QSizePolicy.Expanding)
+
         FigureCanvas.updateGeometry(self)
 
 
-    def draw_initial_figure(self):
 
-        self.drawWaterVerbruik()
+    def setColorScheme(self, scheme):
 
+        if scheme == 'default':
+            # Use the default style that has been loaded with plt.style.use()
+            return
+        
+        # I also like the solution of using the context manager to change the 
+        # rcParam settings temporary for a number of plots.
+        # See https://matplotlib.org/users/style_sheets.html#temporary-styling
+        # and http://stackoverflow.com/a/41527038/2166823
 
-    def drawWaterVerbruik(self):
+        if scheme == "dark":
+            axes_spine_color         = 'white'
+            axes_label_color         = 'white'
+            axes_ticks_color         = 'white'
+            axes_title_color         = 'white'
+            axes_lines_color_cycler  = cycler('color', ['c', 'm', 'y', 'k'])
+            axes_facecolor           = 'None'
+            axes_edgecolor           = 'white'
+            figure_patch_color       = 'None'
 
-        #fig = plt.figure(figsize=(FIGSIZE_X/DPI, FIGSIZE_Y/DPI), dpi=DPI)
-        #fig.suptitle("Meterstanden")
-        
-        title = "Verbruik Water"
-        
-        self.axes.cla()
+        if scheme == "kaleidoscope":
+            axes_spine_color         = 'red'
+            axes_label_color         = 'yellow'
+            axes_ticks_color         = 'purple'
+            axes_title_color         = 'black'
+            axes_lines_color_cycler  = cycler('color', ['r', 'g', 'b', 'y'])
+            axes_facecolor           = 'blue'
+            axes_edgecolor           = 'green'
+            figure_patch_color       = 'orange'
 
-        self.axes.set_title(title)
-        
-        self.axes.plot(self.dt, self.data['water'], 'k-')
-        self.axes.plot(self.dt, self.data['water'], 'b.')
-        
-        self.axes.set_xlabel("Datum")
-        self.axes.set_ylabel("Verbruik Water [m$^3$]")
-        
-        # format the ticks
-        self.axes.xaxis.set_major_locator(years)
-        self.axes.xaxis.set_major_formatter(yearsFmt)
-        self.axes.xaxis.set_minor_locator(months)
-        
-        #datemin = datetime.date(dt.min().year, 1, 1)
-        #datemax = datetime.date(dt.max().year + 1, 1, 1)
-        #self.axes.set_xlim(datemin, datemax)
-        
-        self.axes.format_xdata = mdates.DateFormatter('%Y-%m-%d')
-        self.axes.grid(True)
-        
-        # Tell matplotlib to interpret the x-axis values as dates
-        
-        #self.axes.xaxis_date()
-        
-        # Create a 5% (0.05) and 10% (0.1) padding in the
-        # x and y directions respectively.
-        #plt.margins(0.05, 0.1)
-        
-        # Make space for and rotate the x-axis tick labels
-        
-        #fig.autofmt_xdate()
-        
-        #plt.show()
-        #plt.close()
-        
-        self.draw()
+        self.fig.patch.set_facecolor(figure_patch_color)
 
-        pass
+        # You can either set the background color of the axes hardcoded and equal 
+        # to the color used in the GUI. But perhaps better is to make the axes patch
+        # transparent. When the color of the GUI then changes the patch has the same color.
 
+        if scheme == 'kaleidoscope':
+            self.axes.set_facecolor(axes_facecolor)
+        else:
+            # WATCHOUT: When you call axes.cla() this color will also be cleared
+            # So this line should be after the call to axes.cla()
+            self.axes.patch.set_alpha(0.0)
 
-    def drawGasVerbruik(self):
-        
-        # Tell matplotlib to interpret the x-axis values as dates
-        
-        #self.axes.xaxis_date()
-        
-        title = "Verbruik Gas"
-        
-        self.axes.cla()
+        self.axes.spines['bottom'].set_color(axes_spine_color)
+        self.axes.spines['top'].set_color(axes_spine_color) 
+        self.axes.spines['right'].set_color(axes_spine_color)
+        self.axes.spines['left'].set_color(axes_spine_color)
 
-        self.axes.set_title(title)
+        # Make the background of the canvas transparent
+        self.setStyleSheet("background-color:transparent;")
 
-        self.axes.plot(self.dt, self.data['gas'], 'k-')
-        self.axes.plot(self.dt, self.data['gas'], 'b.')
-        
-        self.axes.set_xlabel("Datum")
-        self.axes.set_ylabel("Verbruik Gas [m$^3$]")
-        
-        self.axes.format_xdata = mdates.DateFormatter('%Y-%m-%d')
-        self.axes.grid(True)
-        
-        plt.setp(self.axes.xaxis.get_majorticklabels(), rotation=30)
-        #self.axes.get_xmajorticklabels().set_rotation(30)
-        # Create a 5% (0.05) and 10% (0.1) padding in the
-        # x and y directions respectively.
-        #plt.margins(0.05, 0.1)
-        
-        # Make space for and rotate the x-axis tick labels
-        
-        #fig.autofmt_xdate()
+        self.axes.xaxis.label.set_color(axes_label_color)
+        self.axes.yaxis.label.set_color(axes_label_color)
 
-        self.draw()
+        self.axes.tick_params(axis='x', colors=axes_ticks_color, which='both')
+        self.axes.tick_params(axis='y', colors=axes_ticks_color, which='both')
 
+        self.axes.title.set_color(axes_title_color)
 
-    def drawElektriciteitsVerbruik(self):
+        self.axes.set_prop_cycle(axes_lines_color_cycler)
 
-        e_total = self.data['edag'] + self.data['enacht']
-
-        self.axes.cla()
-
-        self.axes.xaxis_date()
-        self.axes.set_xlabel("Datum")
-        self.axes.set_ylabel("Verbruik (kWh)")
-        self.axes.plot(self.dt, e_total)
-        self.axes.plot(self.dt, e_total, 'r.')
-        
-        plt.margins(0.05, 0.1)
-
-        self.draw()
-
-
-    def drawZonnepanelen(self):
-
-        sma_ratio = self.data['sma_7000'] / self.data['sma_3000']
-
-        self.axes.cla()
-        
-        self.axes.xaxis_date()        
-        self.axes.set_xlabel("Datum")
-        self.axes.set_ylabel("SMA 7000 / SMA 3000")
-        self.axes.plot(self.dt, sma_ratio, "b.")
-        
-        plt.margins(0.05, 0.1)
-
-        self.draw()
-
-        pass
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>889</width>
-    <height>515</height>
+    <width>974</width>
+    <height>604</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -20,108 +20,62 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>30</y>
-      <width>129</width>
-      <height>161</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QPushButton" name="pushButton">
-       <property name="text">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="1">
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="Water">
+       <attribute name="title">
         <string>Water</string>
-       </property>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="DrawingCanvas" name="water" native="true"/>
+        </item>
+       </layout>
       </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_2">
-       <property name="text">
+      <widget class="QWidget" name="Gas">
+       <attribute name="title">
         <string>Gas</string>
-       </property>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="DrawingCanvas" name="gas" native="true"/>
+        </item>
+       </layout>
       </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_3">
-       <property name="text">
+      <widget class="QWidget" name="Elektriciteit">
+       <attribute name="title">
         <string>Elektriciteit</string>
-       </property>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="DrawingCanvas" name="elektriciteit" native="true"/>
+        </item>
+       </layout>
       </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButton_4">
-       <property name="text">
+      <widget class="QWidget" name="Zonnepanelen">
+       <attribute name="title">
         <string>Zonnepanelen</string>
-       </property>
+       </attribute>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="DrawingCanvas" name="zonnepanelen" native="true"/>
+        </item>
+       </layout>
       </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QGroupBox" name="groupBox">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>9</y>
-      <width>471</width>
-      <height>331</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="title">
-     <string>Drawing Area</string>
-    </property>
-    <widget class="QGraphicsView" name="graphicsView">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>20</y>
-       <width>471</width>
-       <height>311</height>
-      </rect>
-     </property>
-     <property name="mouseTracking">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="DrawingCanvas" name="widget" native="true">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>20</y>
-       <width>471</width>
-       <height>311</height>
-      </rect>
-     </property>
-    </widget>
-   </widget>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>889</width>
+     <width>974</width>
      <height>22</height>
     </rect>
    </property>
@@ -143,70 +97,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>widget</receiver>
-   <slot>drawWaterVerbruik()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>114</x>
-     <y>69</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>186</x>
-     <y>85</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton_2</sender>
-   <signal>clicked()</signal>
-   <receiver>widget</receiver>
-   <slot>drawGasVerbruik()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>89</x>
-     <y>98</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>186</x>
-     <y>120</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton_3</sender>
-   <signal>clicked()</signal>
-   <receiver>widget</receiver>
-   <slot>drawElektriciteitsVerbruik()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>81</x>
-     <y>137</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>210</x>
-     <y>158</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton_4</sender>
-   <signal>clicked()</signal>
-   <receiver>widget</receiver>
-   <slot>drawZonnepanelen()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>74</x>
-     <y>168</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>247</x>
-     <y>212</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
