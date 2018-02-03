@@ -13,6 +13,8 @@ from main_window import Ui_MainWindow
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+
 years = mdates.YearLocator()   # every year
 months = mdates.MonthLocator()  # every month
 yearsFmt = mdates.DateFormatter('%Y')
@@ -32,9 +34,8 @@ class MainWindow_EXEC():
         
         self.MainWindow = QtWidgets.QMainWindow()
         self.ui = Ui_MainWindow()
-        
-        self.ui.setupUi(self.MainWindow)   
-        
+        self.ui.setupUi(self.MainWindow)  
+
         self.MainWindow.show()
 
         self.init_tabs()
@@ -70,7 +71,14 @@ class MainWindow_EXEC():
             5 : self.ui.zonnepanelen
         }
 
+        # Replace QWidget toolBar with what we really want
+        
+        self.ui.toolBar.hide()
+        self.toolBar = NavigationToolbar(drawCanvas[arg], self.MainWindow, coordinates=False) 
+        self.ui.gridLayout.addWidget(self.toolBar, 1, 1, 1, 1)
+
         drawMethod[arg](drawCanvas[arg])
+
 
 
     def drawWaterVerbruik(self, canvas):
