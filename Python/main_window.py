@@ -11,7 +11,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1013, 519)
+        MainWindow.resize(1013, 665)
         MainWindow.setMinimumSize(QtCore.QSize(637, 400))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -75,7 +75,7 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.Zonnepanelen, "")
         self.gridLayout.addWidget(self.tabWidget, 0, 1, 1, 1)
         self.toolBar = QtWidgets.QWidget(self.centralwidget)
-        self.toolBar.setMinimumSize(QtCore.QSize(0, 30))
+        self.toolBar.setMinimumSize(QtCore.QSize(0, 0))
         self.toolBar.setObjectName("toolBar")
         self.gridLayout.addWidget(self.toolBar, 1, 1, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)

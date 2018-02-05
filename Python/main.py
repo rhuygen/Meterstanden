@@ -10,10 +10,13 @@ from PyQt5 import QtCore, QtWidgets
 
 from main_window import Ui_MainWindow
 
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+
+print ("matplotlib version={}".format(matplotlib.__version__))
 
 years = mdates.YearLocator()   # every year
 months = mdates.MonthLocator()  # every month
@@ -28,8 +31,12 @@ class MainWindow_EXEC():
     def __init__(self):
         app = QtWidgets.QApplication(sys.argv)
         
+        # 'dark' theme will be used for matplotlib when creating the figure
+        self.theme = "dark"
+
         # set dark style sheet
         app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
+
         app.setApplicationDisplayName('Meterstanden')
         
         self.MainWindow = QtWidgets.QMainWindow()
@@ -47,13 +54,11 @@ class MainWindow_EXEC():
         import data
         self.data, self.df, self.dt = data.load_data()
 
-        self.ui.tabWidget.currentChanged['int'].connect(self.tabSelected)
+        # Hide the QWidget toolBar that was created in Designer and replace it
+        # later with the toolBar for the selected tab
+        self.ui.toolBar.hide()
 
-        self.tabSelected(self.ui.tabWidget.currentIndex())
-
-    def tabSelected(self, arg=None):
-
-        drawMethod = {
+        self.drawMethod = {
             0 : self.drawWaterVerbruik,
             1 : self.drawGasVerbruik,
             2 : self.drawGasVerbruikPerDag,
@@ -62,7 +67,7 @@ class MainWindow_EXEC():
             5 : self.drawZonnepanelen
         }
 
-        drawCanvas = {
+        self.drawCanvas = {
             0 : self.ui.water,
             1 : self.ui.gas,
             2 : self.ui.gas_per_dag,
@@ -71,14 +76,30 @@ class MainWindow_EXEC():
             5 : self.ui.zonnepanelen
         }
 
-        # Replace QWidget toolBar with what we really want
-        
-        self.ui.toolBar.hide()
-        self.toolBar = NavigationToolbar(drawCanvas[arg], self.MainWindow, coordinates=False) 
-        self.ui.gridLayout.addWidget(self.toolBar, 1, 1, 1, 1)
+        for idx in self.drawCanvas:
+            self.drawMethod[idx](self.drawCanvas[idx])
 
-        drawMethod[arg](drawCanvas[arg])
+        self.drawToolbar = {
+            0 : NavigationToolbar(self.drawCanvas[0], self.MainWindow, coordinates=False),
+            1 : NavigationToolbar(self.drawCanvas[1], self.MainWindow, coordinates=False),
+            2 : NavigationToolbar(self.drawCanvas[2], self.MainWindow, coordinates=False),
+            3 : NavigationToolbar(self.drawCanvas[3], self.MainWindow, coordinates=False),
+            4 : NavigationToolbar(self.drawCanvas[4], self.MainWindow, coordinates=False),
+            5 : NavigationToolbar(self.drawCanvas[5], self.MainWindow, coordinates=False)
+        }
 
+        for idx in self.drawToolbar:
+            self.ui.gridLayout.addWidget(self.drawToolbar[idx], 1, 1, 1, 1)
+
+        self.ui.tabWidget.currentChanged['int'].connect(self.tabSelected)
+
+        self.tabSelected(self.ui.tabWidget.currentIndex())
+
+    def tabSelected(self, arg=None):
+
+        for idx in self.drawToolbar:
+            self.drawToolbar[idx].setVisible(False)
+        self.drawToolbar[arg].setVisible(True)
 
 
     def drawWaterVerbruik(self, canvas):
@@ -89,7 +110,7 @@ class MainWindow_EXEC():
         title = "Verbruik Water"
         
         canvas.axes.cla()
-        canvas.setColorScheme("default")
+        canvas.setColorScheme(self.theme)
 
         canvas.axes.set_title(title)
         
@@ -139,7 +160,7 @@ class MainWindow_EXEC():
         
         canvas.axes.cla()
 
-        canvas.setColorScheme("default")
+        canvas.setColorScheme(self.theme)
 
         canvas.axes.set_title(title)
 
@@ -185,7 +206,7 @@ class MainWindow_EXEC():
         g_per_dag = g_diff / time_diff_days
 
         canvas.axes.cla()
-        canvas.setColorScheme("default")
+        canvas.setColorScheme(self.theme)
 
         canvas.axes.set_title(title)
 
@@ -208,7 +229,7 @@ class MainWindow_EXEC():
 
         canvas.axes.cla()
 
-        canvas.setColorScheme("default")
+        canvas.setColorScheme(self.theme)
 
         canvas.axes.set_title(title)
 
@@ -255,7 +276,7 @@ class MainWindow_EXEC():
 
 
         canvas.axes.cla()
-        canvas.setColorScheme("default")
+        canvas.setColorScheme(self.theme)
 
         canvas.axes.set_title(title)
 
@@ -281,7 +302,7 @@ class MainWindow_EXEC():
 
         canvas.axes.cla()
 
-        canvas.setColorScheme("default")
+        canvas.setColorScheme(self.theme)
 
         canvas.axes.set_title(title)
         

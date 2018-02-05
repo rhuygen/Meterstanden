@@ -80,11 +80,14 @@ class DrawingCanvas(FigureCanvas):
         # and http://stackoverflow.com/a/41527038/2166823
 
         if scheme == "dark":
+            n = 8 # Number of colors
+            dark_colors = [plt.get_cmap('tab10')(1. * i/n) for i in range(n)]
             axes_spine_color         = 'white'
             axes_label_color         = 'white'
             axes_ticks_color         = 'white'
             axes_title_color         = 'white'
             axes_lines_color_cycler  = cycler('color', ['c', 'm', 'y', 'k'])
+            axes_lines_color_cycler  = cycler('color', dark_colors)
             axes_facecolor           = 'None'
             axes_edgecolor           = 'white'
             figure_patch_color       = 'None'
