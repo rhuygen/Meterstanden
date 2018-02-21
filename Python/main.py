@@ -316,6 +316,16 @@ class MainWindow_EXEC():
 
         canvas.draw()
 
+        # Bereken de totale opbrengst per dag van de zonnepanelen
+
+        z_total = self.df.SMA_3000.shift(1) + self.df.SMA_7000.shift(1)
+        z_total = z_total.dropna()
+
+        print ("Totale opbrengst zonnepanelen [kWh]")
+        print (z_total.tail(20))
+
+
+
 
 
 #-------------------------------------------------------------------------------
