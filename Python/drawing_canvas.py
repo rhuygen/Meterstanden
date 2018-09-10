@@ -6,6 +6,7 @@ from matplotlib.figure import Figure
 import matplotlib.pyplot as plt
 
 from PyQt5 import QtWidgets
+from PyQt5 import QtCore
 
 DPI = 96
 FIGSIZE_X = 1280
