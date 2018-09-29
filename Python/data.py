@@ -1,15 +1,17 @@
-import os, logging
+import os
 import datetime
+import logme
 import numpy as np
 import pandas as pd
 
 HOME_DIR = os.path.expanduser('~')
 
-def load_data():
+@logme.log
+def load_data(logger=None):
     # Read the input csv file
     input_filename = 'Private/Git/Meterstanden/Data/Meterstanden.csv'
     
-    logging.info("Reading input csv file from {}.".format(input_filename))
+    logger.info("Reading input csv file from {}.".format(input_filename))
 
     data = np.recfromcsv(os.path.join(HOME_DIR, input_filename))
 

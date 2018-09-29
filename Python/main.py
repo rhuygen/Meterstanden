@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-import sys, os, logging
+import sys
+import os
+import logme
 import numpy as np
 import pandas as pd
 
@@ -22,10 +24,7 @@ years = mdates.YearLocator()   # every year
 months = mdates.MonthLocator()  # every month
 yearsFmt = mdates.DateFormatter('%Y')
 
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(message)s")
-
-
+@logme.log
 class MainWindow_EXEC():
             
     def __init__(self):
@@ -109,6 +108,8 @@ class MainWindow_EXEC():
         
         title = "Verbruik Water"
         
+        self.logger.debug(f"Creating GUI for {title}")
+
         canvas.axes.cla()
         canvas.setColorScheme(self.theme)
 
@@ -158,6 +159,8 @@ class MainWindow_EXEC():
         
         title = "Verbruik Gas"
         
+        self.logger.debug(f"Creating GUI for {title}")
+
         canvas.axes.cla()
 
         canvas.setColorScheme(self.theme)
@@ -191,6 +194,8 @@ class MainWindow_EXEC():
     def drawGasVerbruikPerDag(self, canvas):
 
         title = "Gas verbruik per dag"
+
+        self.logger.debug(f"Creating GUI for {title}")
 
         # Bereken het verbruik in gas tussen twee opeenvolgende metingen
         
@@ -227,6 +232,8 @@ class MainWindow_EXEC():
 
         title = "Verbruik Elektriciteit"
 
+        self.logger.debug(f"Creating GUI for {title}")
+
         canvas.axes.cla()
 
         canvas.setColorScheme(self.theme)
@@ -249,6 +256,8 @@ class MainWindow_EXEC():
 
         title = "Elektriciteitsverbruik per dag"
 
+        self.logger.debug(f"Creating GUI for {title}")
+
         # Bereken het verbruik in elektriciteit tussen twee opeenvolgende metingen
         # Elektriciteit voor de dag en nacht teller eerst bijeen tellen
         
@@ -268,7 +277,7 @@ class MainWindow_EXEC():
         z_total = self.df.SMA_3000.shift(1) + self.df.SMA_7000.shift(1)
         z_total = z_total.dropna()
         
-        print ("Totale opbrengst zonnepanelen op {}: {} [kWh]".format(z_total.index[-1], z_total[-1]))
+        self.logger.debug(f"Totale opbrengst zonnepanelen op {z_total.index[-1]}: {z_total[-1]} [kWh]")
         
         # Het totaal verbruik per dag is de sum van het elektriciteitsverbruik en de opbrengst van de zonnepanelen
         
@@ -299,6 +308,8 @@ class MainWindow_EXEC():
         sma_ratio = self.df.SMA_7000 / self.df.SMA_3000
 
         title = "Zonnepanelen"
+
+        self.logger.debug(f"Creating GUI for {title}")
 
         canvas.axes.cla()
 
