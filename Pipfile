@@ -1,0 +1,18 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+logme = "*"
+pandas = "*"
+qdarkstyle = "*"
+"pyqt5" = "*"
+cycler = "*"
+matplotlib = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.7"
