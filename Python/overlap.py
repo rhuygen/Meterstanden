@@ -53,7 +53,11 @@ offset_gas_226 = {2016: 1587.984, 2017: 3846.380, 2018: 5533.090, 2019: 8453.316
 offset_gas_027 = {2016: 688, 2017: 2780, 2018: 4700, 2019: 7220, 2020: 10500, 2021: 14032, 2022: 17745}
 offsets = offset_gas_027
 
-fig, (ax_gas, ax_edag) = plt.subplots(2, 1, sharex=True, figsize=(16, 16))
+# 110.x DPI -> 1440 Pixels = 13"
+# 130.x DPI -> 1680 Pixels = 13"
+# 147.x DPI -> 1920 Pixels = 13"
+
+fig, (ax_gas, ax_edag) = plt.subplots(2, 1, sharex=True, figsize=(7, 7), dpi=130, layout='tight')
 
 for year in offsets:
     x = df[df['year'] == year]['doy']
