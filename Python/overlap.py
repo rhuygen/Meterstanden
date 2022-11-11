@@ -39,6 +39,8 @@ piv[("Gas", 2022)] -= 17744.537
 
 # piv.plot()
 
+day_afrekening = int(datetime.datetime(2022, 4, 1, 0, 0, 0, 0).strftime("%j"))
+
 
 # offset for day of year
 
@@ -64,7 +66,9 @@ fig, (ax_gas, ax_edag) = plt.subplots(2, 1, sharex=True, figsize=(7, 7), dpi=130
 for year in offsets:
     x = df[df['year'] == year]['doy']
     y = df[df['year'] == year]['Gas']
-    ax_gas.scatter(x, y-offsets[year], label=year, s=6)
+    ax_gas.scatter(x, y-offsets[year], label=year, s=4)
+
+ax_gas.axvline(day_afrekening, linewidth=1)
 
 ax_gas.set_ylabel("m$^3$")
 ax_gas.set_title("Jaarlijks Gasverbruik")
@@ -80,7 +84,9 @@ offsets = offset_edag_003
 for year in offsets:
     x = df[df['year'] == year]['doy']
     y = df[df['year'] == year]['eDag']
-    ax_edag.scatter(x, y-offsets[year], label=year, s=6)
+    ax_edag.scatter(x, y-offsets[year], label=year, s=4)
+
+ax_edag.axvline(day_afrekening, linewidth=1)
 
 ax_edag.set_ylabel("kWh")
 ax_edag.set_title("Jaarlijks Elektriciteitsverbruik")
