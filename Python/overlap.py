@@ -63,7 +63,8 @@ offsets = offset_gas_003  # Offset on 3rd January
 
 fig, (ax_gas, ax_edag) = plt.subplots(2, 1, sharex=True, figsize=(7, 7), dpi=130, layout='tight')
 
-for year in offsets:
+# for year in offsets:
+for year in [2020, 2021, 2022, 2023]:
     x = df[df['year'] == year]['doy']
     y = df[df['year'] == year]['Gas']
     ax_gas.scatter(x, y-offsets[year], label=year, s=4)
@@ -81,7 +82,8 @@ offset_edag_003 = {2016: 163695, 2017: 166632, 2018: 168820, 2019: 168041, 2020:
 
 offsets = offset_edag_003  # Offset on 3rd January
 
-for year in offsets:
+# for year in offsets:
+for year in [2020, 2021, 2022, 2023]:
     x = df[df['year'] == year]['doy']
     y = df[df['year'] == year]['eDag']
     ax_edag.scatter(x, y-offsets[year], label=year, s=4)
