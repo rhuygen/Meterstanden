@@ -2,4 +2,4 @@
 .cache
 venv
 /.idea/
-.egg-info
+/**/*.egg-info/*
