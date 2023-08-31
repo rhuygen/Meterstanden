@@ -8,7 +8,7 @@ import seaborn as sns
 from pandas.plotting import register_matplotlib_converters
 register_matplotlib_converters()
 
-fn = "/Users/rik/Private/Git/Meterstanden/Data/Meterstanden.csv"
+fn = "/Users/rik/Documents/PyCharmProjects/Meterstanden/Data/Meterstanden.csv"
 df = pd.read_csv(fn, comment='#')
 
 df['time'] = pd.to_datetime(df['Date_Time'], format='%Y-%m-%d %H:%M')
