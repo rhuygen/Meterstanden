@@ -9,7 +9,7 @@ HOME_DIR = os.path.expanduser('~')
 @logme.log
 def load_data(logger=None):
     # Read the input csv file
-    input_filename = 'Private/Git/Meterstanden/Data/Meterstanden.csv'
+    input_filename = 'Documents/PyCharmProjects/Meterstanden/Data/Meterstanden.csv'
 
     logger.info("Reading input csv file from {}.".format(input_filename))
 
