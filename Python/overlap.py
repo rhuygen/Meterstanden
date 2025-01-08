@@ -16,7 +16,7 @@ df['month'] = pd.to_datetime(df['time'].dt.month, format='%m')
 df['year'] = df['time'].dt.year
 df['doy'] = df['time'].dt.dayofyear
 
-df = df[['year', 'doy', 'Gas', 'eDag']]
+df = df[['year', 'doy', 'Gas', 'eDag', 'Water']]
 df = df.dropna()
 
 piv = pd.pivot_table(df, index=['doy'], columns=['year'], values=['Gas'], aggfunc='mean')
@@ -61,10 +61,10 @@ offsets = offset_gas_003  # Offset on 3rd January
 # 130.x DPI -> 1680 Pixels = 13"
 # 147.x DPI -> 1920 Pixels = 13"
 
-fig, (ax_gas, ax_edag) = plt.subplots(2, 1, sharex=True, figsize=(7, 7), dpi=130, layout='tight')
+fig, (ax_gas, ax_edag, ax_h2o) = plt.subplots(3, 1, sharex=True, figsize=(7, 7), dpi=130, layout='tight')
 
 # for year in offsets:
-for year in [2020, 2021, 2022, 2023, 2024]:
+for year in [2022, 2023, 2024]:
     x = df[df['year'] == year]['doy']
     y = df[df['year'] == year]['Gas']
     ax_gas.scatter(x, y-offsets[year], label=year, s=4)
@@ -83,7 +83,7 @@ offset_edag_003 = {2016: 163695, 2017: 166632, 2018: 168820, 2019: 168041, 2020:
 offsets = offset_edag_003  # Offset on 3rd January
 
 # for year in offsets:
-for year in [2020, 2021, 2022, 2023, 2024]:
+for year in [2022, 2023, 2024]:
     x = df[df['year'] == year]['doy']
     y = df[df['year'] == year]['eDag']
     ax_edag.scatter(x, y-offsets[year], label=year, s=4)
@@ -93,6 +93,24 @@ ax_edag.axvline(day_afrekening, linewidth=1)
 ax_edag.set_ylabel("kWh")
 ax_edag.set_title("Jaarlijks Elektriciteitsverbruik")
 ax_edag.legend()
+
+# -------------------- Make the plot for water -------------------------------------------------------------------------
+
+offset_h2o_003 = {2020: 1152, 2021: 1340, 2022: 1515, 2023: 1667, 2024: 1818}
+
+offsets = offset_h2o_003  # Offset on 3rd January
+
+# for year in offsets:
+for year in [2022, 2023, 2024]:
+    x = df[df['year'] == year]['doy']
+    y = df[df['year'] == year]['Water']
+    ax_h2o.scatter(x, y-offsets[year], label=year, s=4)
+
+ax_h2o.axvline(day_afrekening, linewidth=1)
+
+ax_h2o.set_ylabel("m$^3$")
+ax_h2o.set_title("Jaarlijks Waterverbruik")
+ax_h2o.legend()
 
 plt.show()
 
